@@ -1,270 +1,418 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiz with Explanations</title>
+    <div class="header">
+        <h5 class="">Coppyright by CHP</h5>
+    </div>
+    <title>Quiz DHCP</title>
+
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background: #f4f4f9;
-        color: #333;
-      }
-      .container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .question-box {
-        margin-bottom: 30px;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background: #f9f9f9;
-      }
-      .question {
-        margin-bottom: 15px;
-        font-size: 18px;
-      }
-      .answers {
-        list-style: none;
-        padding: 0;
-      }
-      .answers li {
-        margin: 5px 0;
-      }
-      .btn {
-        margin-top: 15px;
-        padding: 10px 15px;
-        font-size: 14px;
-        color: #fff;
-        background: #007bff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .btn:hover {
-        background: #0056b3;
-      }
-      .explanation {
-        margin-top: 10px;
-        font-size: 16px;
-        color: #28a745;
-      }
-      .hidden {
-        display: none;
-      }
+        .header h5 {
+            font-style: italic;
+            text-align: center;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+
+        .question {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .answers {
+            list-style: none;
+            padding: 0;
+        }
+
+        .answers li {
+            margin: 5px 0;
+        }
+
+        .btn {
+            margin-top: 15px;
+            padding: 10px 15px;
+            font-size: 14px;
+            color: #fff;
+            background: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+            color: #28a745;
+        }
+
+        .result.error {
+            color: #dc3545;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #28a745;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="container">
-      <h1>DHCP Quiz</h1>
-      <div id="quiz"></div>
+        <h1>DHCP Quiz</h1>
+        <div id="quiz"></div>
+        <button class="btn" onclick="checkAnswers()">Submit</button>
+        <div id="result" class="result"></div>
     </div>
 
     <script>
-      const quizData = [
-        {
-          question: "DHCP là viết tắt của từ nào?",
-          options: [
-            "Dynamic Host Control Protocol",
-            "Dynamic Host Configuration Protocol",
-            "Dynamic Host Connection Protocol",
-            "Dynamic Hardware Configuration Protocol",
-          ],
-          correct: 1,
-          explanation:
-            "DHCP là viết tắt của 'Dynamic Host Configuration Protocol', một giao thức tự động cấp phát địa chỉ IP và thông tin cấu hình.",
-        },
-        {
-          question:
-            "Cổng nào được sử dụng bởi DHCP server để cung cấp thông tin cấu hình?",
-          options: ["68", "67", "80", "443"],
-          correct: 1,
-          explanation:
-            "DHCP server sử dụng cổng 67 để gửi thông tin cấu hình cho các client, còn client sử dụng cổng 68 để gửi yêu cầu.",
-        },
-        {
-          question:
-            "Quá trình nào không phải là một phần trong mô hình hoạt động của DHCP?",
-          options: ["Discover", "Offer", "Acknowledge", "Authenticate"],
-          correct: 3,
-          explanation:
-            "Quá trình hoạt động của DHCP gồm Discover, Offer, Request và Acknowledge. Không có bước 'Authenticate'.",
-        },
-        {
-          question:
-            "Thông điệp đầu tiên mà client gửi khi xin cấp địa chỉ IP mới là gì?",
-          options: ["DHCP Offer", "DHCP Request", "DHCP Discover", "DHCP Ack"],
-          correct: 2,
-          explanation:
-            "Thông điệp đầu tiên là DHCP Discover, client sử dụng nó để tìm kiếm DHCP server khả dụng trong mạng.",
-        },
-        {
-          question:
-            "Thông điệp nào được gửi từ DHCP server để thông báo cho client về địa chỉ IP mà server đã đề xuất?",
-          options: ["DHCP Discover", "DHCP Offer", "DHCP Request", "DHCP Ack"],
-          correct: 1,
-          explanation:
-            "DHCP Offer là thông điệp mà server gửi đến client để đề xuất một địa chỉ IP mà server có thể cấp phát.",
-        },
-        {
-          question:
-            "Khi một client nhận được một địa chỉ IP từ DHCP server, thông điệp nào mà client gửi để yêu cầu địa chỉ IP đó?",
-          options: [
-            "DHCP Discover",
-            "DHCP Request",
-            "DHCP Offer",
-            "DHCP Release",
-          ],
-          correct: 1,
-          explanation:
-            "Client gửi thông điệp DHCP Request để yêu cầu cấp phát địa chỉ IP mà nó đã nhận được trong thông điệp DHCP Offer.",
-        },
-        {
-          question:
-            "Khi client không còn cần sử dụng địa chỉ IP mà nó đã nhận, nó sẽ gửi thông điệp nào để trả lại địa chỉ IP đó?",
-          options: [
-            "DHCP Discover",
-            "DHCP Release",
-            "DHCP Request",
-            "DHCP Ack",
-          ],
-          correct: 1,
-          explanation:
-            "Khi client không còn cần địa chỉ IP, nó sẽ gửi thông điệp DHCP Release để thông báo cho server rằng địa chỉ IP đó có thể được cấp phát lại.",
-        },
-        {
-          question:
-            "Quá trình nào sau đây được sử dụng để gia hạn địa chỉ IP mà client đang sử dụng?",
-          options: [
-            "DHCP Discover",
-            "DHCP Request",
-            "DHCP Offer",
-            "DHCP Release",
-          ],
-          correct: 1,
-          explanation:
-            "Khi client muốn gia hạn địa chỉ IP, nó sẽ gửi thông điệp DHCP Request để yêu cầu gia hạn.",
-        },
-        {
-          question: "Mô hình hoạt động của DHCP có bao nhiêu bước chính?",
-          options: ["3", "4", "5", "6"],
-          correct: 1,
-          explanation:
-            "Mô hình hoạt động của DHCP bao gồm 4 bước chính: Discover, Offer, Request và Acknowledge.",
-        },
-        {
-          question:
-            "Địa chỉ MAC của client được sử dụng trong thông điệp nào của DHCP?",
-          options: ["DHCP Offer", "DHCP Discover", "DHCP Request", "DHCP Ack"],
-          correct: 1,
-          explanation:
-            "Địa chỉ MAC của client được gửi trong thông điệp DHCP Discover để server có thể xác định client đang yêu cầu cấp phát địa chỉ IP.",
-        },
-        {
-          question:
-            "Địa chỉ IP nào được sử dụng để xác định DHCP server trong mạng?",
-          options: [
-            "Địa chỉ IP tĩnh",
-            "Địa chỉ IP động",
-            "Địa chỉ IP riêng",
-            "Địa chỉ IP broadcast",
-          ],
-          correct: 0,
-          explanation:
-            "DHCP server thường được cấu hình với địa chỉ IP tĩnh để đảm bảo rằng client có thể tìm thấy server một cách nhất quán.",
-        },
-        {
-          question:
-            "Khi một client gửi yêu cầu xin cấp IP, thông điệp nào sẽ được gửi đến tất cả các thiết bị trong mạng?",
-          options: ["DHCP Offer", "DHCP Request", "DHCP Discover", "DHCP Ack"],
-          correct: 2,
-          explanation:
-            "Thông điệp DHCP Discover được gửi dưới dạng broadcast để tìm kiếm tất cả các DHCP server có sẵn trong mạng.",
-        },
-        {
-          question:
-            "Thông điệp nào được gửi từ DHCP server để xác nhận rằng yêu cầu cấp phát địa chỉ IP của client đã được chấp nhận?",
-          options: ["DHCP Offer", "DHCP Request", "DHCP Ack", "DHCP Nack"],
-          correct: 2,
-          explanation:
-            "DHCP Ack là thông điệp mà server gửi đến client để xác nhận rằng yêu cầu cấp phát địa chỉ IP đã được chấp nhận.",
-        },
-        {
-          question:
-            "Nếu một DHCP server từ chối yêu cầu cấp phát địa chỉ IP của client, thông điệp nào sẽ được gửi?",
-          options: ["DHCP Ack", "DHCP Nack", "DHCP Offer", "DHCP Discover"],
-          correct: 1,
-          explanation:
-            "DHCP Nack là thông điệp mà server gửi để từ chối yêu cầu cấp phát địa chỉ IP của client.",
-        },
-        {
-          question:
-            "Thời gian mà một địa chỉ IP được cấp phát cho client được gọi là gì?",
-          options: [
-            "Lease time",
-            "Expiration time",
-            "Renewal time",
-            "Release time",
-          ],
-          correct: 0,
-          explanation:
-            "Lease time là khoảng thời gian mà một địa chỉ IP được cấp phát cho client trước khi nó cần được gia hạn hoặc trả lại cho server.",
-        },
-        {
-          question:
-            "Trong quá trình xin cấp IP, client có thể xác định địa chỉ nào để sử dụng làm gateway mặc định?",
-          options: [
-            "Thông điệp DHCP Request",
-            "Thông điệp DHCP Offer",
-            "Thông điệp DHCP Discover",
-            "Thông điệp DHCP Ack",
-          ],
-          correct: 1,
-          explanation:
-            "Trong thông điệp DHCP Offer, server cung cấp không chỉ địa chỉ IP mà còn thông tin về gateway mặc định và DNS server.",
-        },
-        {
-          question:
-            "Giao thức nào được sử dụng để truyền tải thông điệp DHCP giữa client và server?",
-          options: ["TCP", "UDP", "ICMP", "HTTP"],
-          correct: 1,
-          explanation:
-            "DHCP sử dụng giao thức UDP để truyền tải thông điệp giữa client và server, với cổng 67 cho server và cổng 68 cho client.",
-        },
-        {
-          question:
-            "Khi một client khởi động và không có địa chỉ IP, nó sẽ thực hiện bước nào đầu tiên trong quy trình DHCP?",
-          options: [
-            "Gửi DHCP Offer",
-            "Gửi DHCP Discover",
-            "Gửi DHCP Request",
-            "Gửi DHCP Ack",
-          ],
-          correct: 1,
-          explanation:
-            "Khi client khởi động và không có địa chỉ IP, bước đầu tiên của nó là gửi thông điệp DHCP Discover để tìm kiếm DHCP server.",
-        },
-      ];
+        const quizData = [{
+                question: "DHCP là viết tắt của từ nào?",
+                options: [
+                    "Dynamic Host Control Protocol",
+                    "Dynamic Host Configuration Protocol",
+                    "Dynamic Host Connection Protocol",
+                    "Dynamic Hardware Configuration Protocol",
+                ],
+                correct: 1,
+                explanation: "DHCP là viết tắt của 'Dynamic Host Configuration Protocol', một giao thức tự động cấp phát địa chỉ IP và thông tin cấu hình.",
+            },
+            {
+                question: "Cổng nào được sử dụng bởi DHCP server để cung cấp thông tin cấu hình?",
+                options: ["68", "67", "80", "443"],
+                correct: 1,
+                explanation: "DHCP server sử dụng cổng 67 để gửi thông tin cấu hình cho các client, còn client sử dụng cổng 68 để gửi yêu cầu.",
+            },
+            {
+                question: "Quá trình nào không phải là một phần trong mô hình hoạt động của DHCP?",
+                options: ["Discover", "Offer", "Acknowledge", "Authenticate"],
+                correct: 3,
+                explanation: "Quá trình hoạt động của DHCP gồm Discover, Offer, Request và Acknowledge. Không có bước 'Authenticate'.",
+            },
+            {
+                question: "Thông điệp đầu tiên mà client gửi khi xin cấp địa chỉ IP mới là gì?",
+                options: ["DHCP Offer", "DHCP Request", "DHCP Discover", "DHCP Ack"],
+                correct: 2,
+                explanation: "Thông điệp đầu tiên là DHCP Discover, client sử dụng nó để tìm kiếm DHCP server khả dụng trong mạng.",
+            },
+            {
+                question: "Thông điệp nào được gửi từ DHCP server để thông báo cho client về địa chỉ IP mà server đã đề xuất?",
+                options: ["DHCP Discover", "DHCP Offer", "DHCP Request", "DHCP Ack"],
+                correct: 1,
+                explanation: "DHCP Offer là thông điệp mà server gửi đến client để đề xuất một địa chỉ IP mà server có thể cấp phát.",
+            },
+            {
+                question: "Khi một client nhận được một địa chỉ IP từ DHCP server, thông điệp nào mà client gửi để yêu cầu địa chỉ IP đó?",
+                options: [
+                    "DHCP Discover",
+                    "DHCP Request",
+                    "DHCP Offer",
+                    "DHCP Release",
+                ],
+                correct: 1,
+                explanation: "Client gửi thông điệp DHCP Request để yêu cầu cấp phát địa chỉ IP mà nó đã nhận được trong thông điệp DHCP Offer.",
+            },
+            {
+                question: "Khi client không còn cần sử dụng địa chỉ IP mà nó đã nhận, nó sẽ gửi thông điệp nào để trả lại địa chỉ IP đó?",
+                options: [
+                    "DHCP Discover",
+                    "DHCP Release",
+                    "DHCP Request",
+                    "DHCP Ack",
+                ],
+                correct: 1,
+                explanation: "Khi client không còn cần địa chỉ IP, nó sẽ gửi thông điệp DHCP Release để thông báo cho server rằng địa chỉ IP đó có thể được cấp phát lại.",
+            },
+            {
+                question: "Quá trình nào sau đây được sử dụng để gia hạn địa chỉ IP mà client đang sử dụng?",
+                options: [
+                    "DHCP Discover",
+                    "DHCP Request",
+                    "DHCP Offer",
+                    "DHCP Release",
+                ],
+                correct: 1,
+                explanation: "Khi client muốn gia hạn địa chỉ IP, nó sẽ gửi thông điệp DHCP Request để yêu cầu gia hạn.",
+            },
+            {
+                question: "Mô hình hoạt động của DHCP có bao nhiêu bước chính?",
+                options: ["3", "4", "5", "6"],
+                correct: 1,
+                explanation: "Mô hình hoạt động của DHCP bao gồm 4 bước chính: Discover, Offer, Request và Acknowledge.",
+            },
+            {
+                question: "Địa chỉ MAC của client được sử dụng trong thông điệp nào của DHCP?",
+                options: ["DHCP Offer", "DHCP Discover", "DHCP Request", "DHCP Ack"],
+                correct: 1,
+                explanation: "Địa chỉ MAC của client được gửi trong thông điệp DHCP Discover để server có thể xác định client đang yêu cầu cấp phát địa chỉ IP.",
+            },
+            {
+                question: "Địa chỉ IP nào được sử dụng để xác định DHCP server trong mạng?",
+                options: [
+                    "Địa chỉ IP tĩnh",
+                    "Địa chỉ IP động",
+                    "Địa chỉ IP riêng",
+                    "Địa chỉ IP broadcast",
+                ],
+                correct: 0,
+                explanation: "DHCP server thường được cấu hình với địa chỉ IP tĩnh để đảm bảo rằng client có thể tìm thấy server một cách nhất quán.",
+            },
+            {
+                question: "Khi một client gửi yêu cầu xin cấp IP, thông điệp nào sẽ được gửi đến tất cả các thiết bị trong mạng?",
+                options: ["DHCP Offer", "DHCP Request", "DHCP Discover", "DHCP Ack"],
+                correct: 2,
+                explanation: "Thông điệp DHCP Discover được gửi dưới dạng broadcast để tìm kiếm tất cả các DHCP server có sẵn trong mạng.",
+            },
+            {
+                question: "Thông điệp nào được gửi từ DHCP server để xác nhận rằng yêu cầu cấp phát địa chỉ IP của client đã được chấp nhận?",
+                options: ["DHCP Offer", "DHCP Request", "DHCP Ack", "DHCP Nack"],
+                correct: 2,
+                explanation: "DHCP Ack là thông điệp mà server gửi đến client để xác nhận rằng yêu cầu cấp phát địa chỉ IP đã được chấp nhận.",
+            },
+            {
+                question: "Nếu một DHCP server từ chối yêu cầu cấp phát địa chỉ IP của client, thông điệp nào sẽ được gửi?",
+                options: ["DHCP Ack", "DHCP Nack", "DHCP Offer", "DHCP Discover"],
+                correct: 1,
+                explanation: "DHCP Nack là thông điệp mà server gửi để từ chối yêu cầu cấp phát địa chỉ IP của client.",
+            },
+            {
+                question: "Thời gian mà một địa chỉ IP được cấp phát cho client được gọi là gì?",
+                options: [
+                    "Lease time",
+                    "Expiration time",
+                    "Renewal time",
+                    "Release time",
+                ],
+                correct: 0,
+                explanation: "Lease time là khoảng thời gian mà một địa chỉ IP được cấp phát cho client trước khi nó cần được gia hạn hoặc trả lại cho server.",
+            },
+            {
+                question: "Trong quá trình xin cấp IP, client có thể xác định địa chỉ nào để sử dụng làm gateway mặc định?",
+                options: [
+                    "Thông điệp DHCP Request",
+                    "Thông điệp DHCP Offer",
+                    "Thông điệp DHCP Discover",
+                    "Thông điệp DHCP Ack",
+                ],
+                correct: 1,
+                explanation: "Trong thông điệp DHCP Offer, server cung cấp không chỉ địa chỉ IP mà còn thông tin về gateway mặc định và DNS server.",
+            },
+            {
+                question: "Giao thức nào được sử dụng để truyền tải thông điệp DHCP giữa client và server?",
+                options: ["TCP", "UDP", "ICMP", "HTTP"],
+                correct: 1,
+                explanation: "DHCP sử dụng giao thức UDP để truyền tải thông điệp giữa client và server, với cổng 67 cho server và cổng 68 cho client.",
+            },
+            {
+                question: "Khi một client khởi động và không có địa chỉ IP, nó sẽ thực hiện bước nào đầu tiên trong quy trình DHCP?",
+                options: [
+                    "Gửi DHCP Offer",
+                    "Gửi DHCP Discover",
+                    "Gửi DHCP Request",
+                    "Gửi DHCP Ack",
+                ],
+                correct: 1,
+                explanation: "Khi client khởi động và không có địa chỉ IP, bước đầu tiên của nó là gửi thông điệp DHCP Discover để tìm kiếm DHCP server.",
+            },
+            {
+                question: "Khi một DHCP server cung cấp thông tin cấu hình cho client, thông tin nào sau đây không được cung cấp?",
+                options: ["Địa chỉ IP", "Địa chỉ MAC", "Subnet mask", "DNS server"],
+                correct: 1,
+                explanation: "DHCP server cung cấp địa chỉ IP, subnet mask, gateway mặc định và DNS server cho client, nhưng không cung cấp địa chỉ MAC của client."
+            },
+            {
+                question: "Khi một client muốn gia hạn địa chỉ IP mà nó đang sử dụng, nó sẽ gửi thông điệp nào?",
+                options: ["DHCP Discover", "DHCP Request", "DHCP Offer", "DHCP Release"],
+                correct: 1,
+                explanation: "Client sẽ gửi thông điệp DHCP Request để yêu cầu gia hạn địa chỉ IP mà nó đang sử dụng."
+            },
+            {
+                question: "Thông điệp nào được gửi để thông báo rằng client đã nhận được địa chỉ IP và sẽ sử dụng nó?",
+                options: ["DHCP Discover", "DHCP Request", "DHCP Ack", "DHCP Release"],
+                correct: 2,
+                explanation: "Thông điệp DHCP Ack được gửi từ server để xác nhận rằng client đã nhận được địa chỉ IP và sẽ sử dụng nó."
+            },
+            {
+                question: "Trong trường hợp một client không nhận được DHCP Offer từ server, điều gì có thể xảy ra?",
+                options: [
+                    "Client sẽ tự động cấu hình địa chỉ IP tĩnh.",
+                    "Client sẽ gửi lại DHCP Discover.",
+                    "Client sẽ ngừng hoạt động.",
+                    "Client sẽ nhận địa chỉ IP từ một DHCP server khác."
+                ],
+                correct: 1,
+                explanation: "Nếu client không nhận được DHCP Offer, nó có thể gửi lại thông điệp DHCP Discover để tìm kiếm server khác."
+            },
+            {
+                question: "Khi một client đang sử dụng địa chỉ IP động, điều gì sẽ xảy ra khi lease time hết hạn?",
+                options: [
+                    "Client sẽ tự động gia hạn lease time.",
+                    "Client sẽ mất kết nối mạng.",
+                    "Client sẽ gửi DHCP Release.",
+                    "Client sẽ nhận một địa chỉ IP mới."
+                ],
+                correct: 0,
+                explanation: "Trước khi lease time hết hạn, client sẽ gửi thông điệp DHCP Request để gia hạn lease time của địa chỉ IP đang sử dụng."
+            },
+            {
+                question: "Mô hình nào sau đây mô tả cách thức hoạt động của DHCP?",
+                options: ["Client-Server", "Peer-to-Peer", "Hybrid", "Broadcast"],
+                correct: 0,
+                explanation: "DHCP hoạt động theo mô hình Client-Server, trong đó client yêu cầu thông tin từ server."
+            },
+            {
+                question: "Để kiểm tra thông tin cấu hình IP trên máy tính, lệnh nào sau đây được sử dụng?",
+                options: [
+                    "ipconfig /renew",
+                    "ipconfig /release",
+                    "ipconfig /all",
+                    "ipconfig /status"
+                ],
+                correct: 2,
+                explanation: "Lệnh ipconfig /all được sử dụng để hiển thị tất cả thông tin cấu hình IP của máy tính."
+            },
+            {
+                question: "Một DHCP server có thể cấp phát bao nhiêu địa chỉ IP cho các client trong cùng một mạng?",
+                options: [
+                    "Một địa chỉ IP",
+                    "Tối đa 254 địa chỉ IP",
+                    "Tối đa 256 địa chỉ IP",
+                    "Không giới hạn số lượng địa chỉ IP"
+                ],
+                correct: 3,
+                explanation: "Số lượng địa chỉ IP mà DHCP server có thể cấp phát phụ thuộc vào cấu hình và phạm vi địa chỉ IP trong mạng."
+            },
+            {
+                question: "Khi một client gửi thông điệp DHCP Discover, nó có thể nhận được bao nhiêu DHCP Offer từ các server khác nhau?",
+                options: ["Một", "Hai", "Nhiều hơn hai", "Không nhận được"],
+                correct: 2,
+                explanation: "Client có thể nhận được nhiều DHCP Offer từ các DHCP server khác nhau trong mạng."
+            },
+            {
+                question: "Trong một mạng lớn, nếu có nhiều DHCP server, làm thế nào để tránh xung đột địa chỉ IP?",
+                options: [
+                    "Sử dụng địa chỉ IP tĩnh cho tất cả client.",
+                    "Cấu hình các DHCP server với các phạm vi địa chỉ IP khác nhau.",
+                    "Chỉ sử dụng một DHCP server.",
+                    "Tất cả các phương án trên."
+                ],
+                correct: 1,
+                explanation: "Để tránh xung đột địa chỉ IP, các DHCP server trong cùng một mạng nên được cấu hình với các phạm vi địa chỉ IP khác nhau."
+            },
+            {
+                question: "Khi một client gửi thông điệp DHCP Request để gia hạn địa chỉ IP, thông điệp này sẽ được gửi đến đâu?",
+                options: [
+                    "Đến tất cả các DHCP server trong mạng.",
+                    "Đến DHCP server mà client đã nhận được địa chỉ IP.",
+                    "Đến một địa chỉ IP ngẫu nhiên.",
+                    "Đến địa chỉ broadcast."
+                ],
+                correct: 1,
+                explanation: "Khi client muốn gia hạn địa chỉ IP, nó sẽ gửi thông điệp DHCP Request trực tiếp đến DHCP server mà nó đã nhận được địa chỉ IP."
+            },
+            {
+                question: "Thông điệp nào sau đây không phải là một phần của quy trình cấp phát địa chỉ IP trong DHCP?",
+                options: ["DHCP Discover", "DHCP Offer", "DHCP Request", "DHCP Status"],
+                correct: 3,
+                explanation: "DHCP Status không phải là một thông điệp trong quy trình cấp phát địa chỉ IP. Các thông điệp chính bao gồm DHCP Discover, Offer, Request và Acknowledge."
+            },
+            {
+                question: "Nếu một DHCP server không còn địa chỉ IP nào để cấp phát, thông điệp nào sẽ được gửi đến client?",
+                options: ["DHCP Offer", "DHCP Nack", "DHCP Request", "DHCP Discover"],
+                correct: 1,
+                explanation: "Nếu DHCP server không còn địa chỉ IP nào để cấp phát, nó sẽ gửi thông điệp DHCP Nack để thông báo cho client rằng yêu cầu của nó không thể được chấp nhận."
+            },
+            {
+                question: "Khi một client khởi động lại và vẫn muốn sử dụng địa chỉ IP cũ, nó sẽ gửi thông điệp nào để yêu cầu lại địa chỉ đó?",
+                options: ["DHCP Discover", "DHCP Request", "DHCP Offer", "DHCP Release"],
+                correct: 1,
+                explanation: "Khi client khởi động lại và muốn yêu cầu lại địa chỉ IP cũ, nó sẽ gửi thông điệp DHCP Request đến server."
+            },
+            {
+                question: "Địa chỉ IP nào được sử dụng để chỉ định DHCP server trong một mạng?",
+                options: ["192.168.1.1", "255.255.255.255", "0.0.0.0", "127.0.0.1"],
+                correct: 0,
+                explanation: "Địa chỉ IP của DHCP server thường được cấu hình là một địa chỉ tĩnh trong mạng, ví dụ như 192.168.1.1."
+            },
+            {
+                question: "Khi một client gửi thông điệp DHCP Release, điều gì sẽ xảy ra với địa chỉ IP mà nó đang sử dụng?",
+                options: [
+                    "Địa chỉ IP sẽ bị xóa ngay lập tức.",
+                    "Địa chỉ IP sẽ được giữ lại cho client.",
+                    "Địa chỉ IP sẽ được đưa vào danh sách đen.",
+                    "Địa chỉ IP sẽ được trả lại cho DHCP server để cấp phát cho client khác."
+                ],
+                correct: 3,
+                explanation: "Khi client gửi thông điệp DHCP Release, địa chỉ IP sẽ được trả lại cho DHCP server để có thể cấp phát cho client khác."
+            },
+            {
+                question: "Trong một mạng sử dụng DHCP, thông điệp nào được gửi từ client để xác nhận rằng nó đã nhận được thông tin cấu hình từ server?",
+                options: ["DHCP Discover", "DHCP Request", "DHCP Ack", "DHCP Offer"],
+                correct: 2,
+                explanation: "Thông điệp DHCP Ack được gửi từ server đến client để xác nhận rằng client đã nhận được thông tin cấu hình."
+            },
+            {
+                question: "Lệnh nào được sử dụng để yêu cầu một địa chỉ IP mới từ DHCP server trên máy tính Windows?",
+                options: ["ipconfig /release", "ipconfig /renew", "ipconfig /all", "ipconfig /status"],
+                correct: 1,
+                explanation: "Lệnh ipconfig /renew được sử dụng để yêu cầu một địa chỉ IP mới từ DHCP server."
+            },
+            {
+                question: "Khi bạn muốn trả lại địa chỉ IP mà máy tính đang sử dụng cho DHCP server, bạn sẽ sử dụng lệnh nào?",
+                options: ["ipconfig /renew", "ipconfig /release", "ipconfig /all", "ipconfig /reset"],
+                correct: 1,
+                explanation: "Lệnh ipconfig /release được sử dụng để trả lại địa chỉ IP mà máy tính đang sử dụng cho DHCP server, giải phóng địa chỉ IP để có thể cấp phát cho client khác."
+            }
+        ];
 
-      const quizContainer = document.getElementById("quiz");
+        const quizContainer = document.getElementById("quiz");
 
-      function loadQuiz() {
-        quizData.forEach((item, index) => {
-          const questionBox = document.createElement("div");
-          questionBox.classList.add("question-box");
+        function loadQuiz() {
+            quizData.forEach((item, index) => {
+                const questionBox = document.createElement("div");
+                questionBox.classList.add("question-box");
 
-          questionBox.innerHTML = `
+                questionBox.innerHTML = `
           <div class="question">${index + 1}. ${item.question}</div>
           <ul class="answers">
             ${item.options
@@ -286,20 +434,42 @@
           </div>
         `;
 
-          quizContainer.appendChild(questionBox);
-        });
-      }
-
-      function showExplanation(index) {
-        const explanation = document.getElementById(`explanation${index}`);
-        if (explanation.classList.contains("hidden")) {
-          explanation.classList.remove("hidden");
-        } else {
-          explanation.classList.add("hidden");
+                quizContainer.appendChild(questionBox);
+            });
         }
-      }
 
-      loadQuiz();
+        function showExplanation(index) {
+            const explanation = document.getElementById(`explanation${index}`);
+            if (explanation.classList.contains("hidden")) {
+                explanation.classList.remove("hidden");
+            } else {
+                explanation.classList.add("hidden");
+            }
+        }
+
+        const resultContainer = document.getElementById("result");
+
+        function checkAnswers() {
+            let score = 0;
+
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="question${index}"]:checked`);
+                if (selected && parseInt(selected.value) === item.correct) {
+                    score++;
+                }
+            });
+
+            if (score === quizData.length) {
+                resultContainer.textContent = `Perfect! You scored ${score}/${quizData.length}.`;
+                resultContainer.className = "result";
+            } else {
+                resultContainer.textContent = `You scored ${score}/${quizData.length}. Try again!`;
+                resultContainer.className = "result error";
+            }
+        }
+
+        loadQuiz();
     </script>
-  </body>
+</body>
+
 </html>
