@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz with Explanations</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f4f9;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .question-box {
+        margin-bottom: 30px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: #f9f9f9;
+      }
+      .question {
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+      .answers {
+        list-style: none;
+        padding: 0;
+      }
+      .answers li {
+        margin: 5px 0;
+      }
+      .btn {
+        margin-top: 15px;
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #fff;
+        background: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background: #0056b3;
+      }
+      .explanation {
+        margin-top: 10px;
+        font-size: 16px;
+        color: #28a745;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>DHCP Quiz</h1>
+      <div id="quiz"></div>
+    </div>
+
+    <script>
+      const quizData = [
+        {
+          question: "DHCP là viết tắt của từ nào?",
+          options: [
+            "Dynamic Host Control Protocol",
+            "Dynamic Host Configuration Protocol",
+            "Dynamic Host Connection Protocol",
+            "Dynamic Hardware Configuration Protocol",
+          ],
+          correct: 1,
+          explanation:
+            "DHCP là viết tắt của 'Dynamic Host Configuration Protocol', một giao thức tự động cấp phát địa chỉ IP và thông tin cấu hình.",
+        },
+        {
+          question:
+            "Cổng nào được sử dụng bởi DHCP server để cung cấp thông tin cấu hình?",
+          options: ["68", "67", "80", "443"],
+          correct: 1,
+          explanation:
+            "DHCP server sử dụng cổng 67 để gửi thông tin cấu hình cho các client, còn client sử dụng cổng 68 để gửi yêu cầu.",
+        },
+        {
+          question:
+            "Quá trình nào không phải là một phần trong mô hình hoạt động của DHCP?",
+          options: ["Discover", "Offer", "Acknowledge", "Authenticate"],
+          correct: 3,
+          explanation:
+            "Quá trình hoạt động của DHCP gồm Discover, Offer, Request và Acknowledge. Không có bước 'Authenticate'.",
+        },
+        {
+          question:
+            "Thông điệp đầu tiên mà client gửi khi xin cấp địa chỉ IP mới là gì?",
+          options: ["DHCP Offer", "DHCP Request", "DHCP Discover", "DHCP Ack"],
+          correct: 2,
+          explanation:
+            "Thông điệp đầu tiên là DHCP Discover, client sử dụng nó để tìm kiếm DHCP server khả dụng trong mạng.",
+        },
+        {
+          question:
+            "Thông điệp nào được gửi từ DHCP server để thông báo cho client về địa chỉ IP mà server đã đề xuất?",
+          options: ["DHCP Discover", "DHCP Offer", "DHCP Request", "DHCP Ack"],
+          correct: 1,
+          explanation:
+            "DHCP Offer là thông điệp mà server gửi đến client để đề xuất một địa chỉ IP mà server có thể cấp phát.",
+        },
+        {
+          question:
+            "Khi một client nhận được một địa chỉ IP từ DHCP server, thông điệp nào mà client gửi để yêu cầu địa chỉ IP đó?",
+          options: [
+            "DHCP Discover",
+            "DHCP Request",
+            "DHCP Offer",
+            "DHCP Release",
+          ],
+          correct: 1,
+          explanation:
+            "Client gửi thông điệp DHCP Request để yêu cầu cấp phát địa chỉ IP mà nó đã nhận được trong thông điệp DHCP Offer.",
+        },
+        {
+          question:
+            "Khi client không còn cần sử dụng địa chỉ IP mà nó đã nhận, nó sẽ gửi thông điệp nào để trả lại địa chỉ IP đó?",
+          options: [
+            "DHCP Discover",
+            "DHCP Release",
+            "DHCP Request",
+            "DHCP Ack",
+          ],
+          correct: 1,
+          explanation:
+            "Khi client không còn cần địa chỉ IP, nó sẽ gửi thông điệp DHCP Release để thông báo cho server rằng địa chỉ IP đó có thể được cấp phát lại.",
+        },
+        {
+          question:
+            "Quá trình nào sau đây được sử dụng để gia hạn địa chỉ IP mà client đang sử dụng?",
+          options: [
+            "DHCP Discover",
+            "DHCP Request",
+            "DHCP Offer",
+            "DHCP Release",
+          ],
+          correct: 1,
+          explanation:
+            "Khi client muốn gia hạn địa chỉ IP, nó sẽ gửi thông điệp DHCP Request để yêu cầu gia hạn.",
+        },
+        {
+          question: "Mô hình hoạt động của DHCP có bao nhiêu bước chính?",
+          options: ["3", "4", "5", "6"],
+          correct: 1,
+          explanation:
+            "Mô hình hoạt động của DHCP bao gồm 4 bước chính: Discover, Offer, Request và Acknowledge.",
+        },
+        {
+          question:
+            "Địa chỉ MAC của client được sử dụng trong thông điệp nào của DHCP?",
+          options: ["DHCP Offer", "DHCP Discover", "DHCP Request", "DHCP Ack"],
+          correct: 1,
+          explanation:
+            "Địa chỉ MAC của client được gửi trong thông điệp DHCP Discover để server có thể xác định client đang yêu cầu cấp phát địa chỉ IP.",
+        },
+        {
+          question:
+            "Địa chỉ IP nào được sử dụng để xác định DHCP server trong mạng?",
+          options: [
+            "Địa chỉ IP tĩnh",
+            "Địa chỉ IP động",
+            "Địa chỉ IP riêng",
+            "Địa chỉ IP broadcast",
+          ],
+          correct: 0,
+          explanation:
+            "DHCP server thường được cấu hình với địa chỉ IP tĩnh để đảm bảo rằng client có thể tìm thấy server một cách nhất quán.",
+        },
+        {
+          question:
+            "Khi một client gửi yêu cầu xin cấp IP, thông điệp nào sẽ được gửi đến tất cả các thiết bị trong mạng?",
+          options: ["DHCP Offer", "DHCP Request", "DHCP Discover", "DHCP Ack"],
+          correct: 2,
+          explanation:
+            "Thông điệp DHCP Discover được gửi dưới dạng broadcast để tìm kiếm tất cả các DHCP server có sẵn trong mạng.",
+        },
+        {
+          question:
+            "Thông điệp nào được gửi từ DHCP server để xác nhận rằng yêu cầu cấp phát địa chỉ IP của client đã được chấp nhận?",
+          options: ["DHCP Offer", "DHCP Request", "DHCP Ack", "DHCP Nack"],
+          correct: 2,
+          explanation:
+            "DHCP Ack là thông điệp mà server gửi đến client để xác nhận rằng yêu cầu cấp phát địa chỉ IP đã được chấp nhận.",
+        },
+        {
+          question:
+            "Nếu một DHCP server từ chối yêu cầu cấp phát địa chỉ IP của client, thông điệp nào sẽ được gửi?",
+          options: ["DHCP Ack", "DHCP Nack", "DHCP Offer", "DHCP Discover"],
+          correct: 1,
+          explanation:
+            "DHCP Nack là thông điệp mà server gửi để từ chối yêu cầu cấp phát địa chỉ IP của client.",
+        },
+        {
+          question:
+            "Thời gian mà một địa chỉ IP được cấp phát cho client được gọi là gì?",
+          options: [
+            "Lease time",
+            "Expiration time",
+            "Renewal time",
+            "Release time",
+          ],
+          correct: 0,
+          explanation:
+            "Lease time là khoảng thời gian mà một địa chỉ IP được cấp phát cho client trước khi nó cần được gia hạn hoặc trả lại cho server.",
+        },
+        {
+          question:
+            "Trong quá trình xin cấp IP, client có thể xác định địa chỉ nào để sử dụng làm gateway mặc định?",
+          options: [
+            "Thông điệp DHCP Request",
+            "Thông điệp DHCP Offer",
+            "Thông điệp DHCP Discover",
+            "Thông điệp DHCP Ack",
+          ],
+          correct: 1,
+          explanation:
+            "Trong thông điệp DHCP Offer, server cung cấp không chỉ địa chỉ IP mà còn thông tin về gateway mặc định và DNS server.",
+        },
+        {
+          question:
+            "Giao thức nào được sử dụng để truyền tải thông điệp DHCP giữa client và server?",
+          options: ["TCP", "UDP", "ICMP", "HTTP"],
+          correct: 1,
+          explanation:
+            "DHCP sử dụng giao thức UDP để truyền tải thông điệp giữa client và server, với cổng 67 cho server và cổng 68 cho client.",
+        },
+        {
+          question:
+            "Khi một client khởi động và không có địa chỉ IP, nó sẽ thực hiện bước nào đầu tiên trong quy trình DHCP?",
+          options: [
+            "Gửi DHCP Offer",
+            "Gửi DHCP Discover",
+            "Gửi DHCP Request",
+            "Gửi DHCP Ack",
+          ],
+          correct: 1,
+          explanation:
+            "Khi client khởi động và không có địa chỉ IP, bước đầu tiên của nó là gửi thông điệp DHCP Discover để tìm kiếm DHCP server.",
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+
+      function loadQuiz() {
+        quizData.forEach((item, index) => {
+          const questionBox = document.createElement("div");
+          questionBox.classList.add("question-box");
+
+          questionBox.innerHTML = `
+          <div class="question">${index + 1}. ${item.question}</div>
+          <ul class="answers">
+            ${item.options
+              .map(
+                (option, i) =>
+                  `<li>
+                    <label>
+                      <input type="radio" name="question${index}" value="${i}">
+                      ${option}
+                    </label>
+                  </li>`
+              )
+              .join("")}
+          </ul>
+          <button class="btn" onclick="showExplanation(${index})">Xem đáp án và lời giải</button>
+          <div id="explanation${index}" class="explanation hidden">
+            Đáp án đúng: ${item.options[item.correct]}<br>
+            Lời giải: ${item.explanation}
+          </div>
+        `;
+
+          quizContainer.appendChild(questionBox);
+        });
+      }
+
+      function showExplanation(index) {
+        const explanation = document.getElementById(`explanation${index}`);
+        if (explanation.classList.contains("hidden")) {
+          explanation.classList.remove("hidden");
+        } else {
+          explanation.classList.add("hidden");
+        }
+      }
+
+      loadQuiz();
+    </script>
+  </body>
+</html>
